@@ -1,27 +1,35 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const Post = sequelize.define("post", {
-  id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    autoIncrement: true,
+const PostSchema = new Schema(
+  {
+    title: String,
+    content: String,
+    category: { type: Schema.Types.ObjectId, ref: "Category" },
+    author: { type: Schema.Types.ObjectId, ref: "User" },
+    status: {
+      type: String,
+      enum: ["Published", "Unpublished"],
+      default: "Unpublished",
+    },
+    comments: [
+      {
+        commentUser: String,
+        commentBody: String,
+        commentDate: {
+          type: Date,
+          default: () => {
+            const date = new Date();
+            return date.toLocaleDateString();
+          },
+        },
+      },
+    ],
   },
+  { collection: "post" }
+);
 
-  title: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+//Generate createdAt & updatedAt fields automatically
+PostSchema.set("timestamps", true);
 
-  content: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-
-  category: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
-
-module.exports = Post;
+module.exports = mongoose.model("Post", PostSchema);
