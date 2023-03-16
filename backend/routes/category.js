@@ -1,17 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const categoryController = require("../controllers/categoryController");
+const passport = require("passport");
 
-//GET request for viewing all posts under a category
+//GET request for VIEWING all posts under a category
 router.get("/:id/posts", categoryController.getCategoryPosts)
 
-//POST request to create a category
-router.post("/create", categoryController.createCategory);
+/*
+-------------PROTECTED Routes----------------
+*/
 
-//DELETE request to delete a category
-router.delete("/:id/delete", categoryController.deleteCategory);
+//POST request to CREATE a category
+router.post("/create", passport.authenticate("jwt", {session: false}), categoryController.createCategory);
 
-//PUT request to update a category
-router.put("/:id/update", categoryController.updateCategory);
+//DELETE request to DELETE a category
+router.delete("/:id/delete", passport.authenticate("jwt", {session: false}), categoryController.deleteCategory);
+
+//PUT request to UPDATE a category
+router.put("/:id/update", passport.authenticate("jwt", {session: false}), categoryController.updateCategory);
 
 module.exports = router;

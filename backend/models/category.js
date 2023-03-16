@@ -1,12 +1,23 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/db");
+const Post = require("./post")
 
-const CategorySchema = new Schema(
-  {
-    name: String,
-    posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+const Category = sequelize.define("category", {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
   },
-  { collection: "category" }
-);
 
-module.exports = mongoose.model("Category", CategorySchema);
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+});
+
+Category.hasMany(Post, {
+  foreignKey: "categoryId",
+});
+
+module.exports = Category;

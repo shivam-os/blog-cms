@@ -4,22 +4,27 @@ const passport = require("passport")
 const postValidator = require("../middlewares/postValidator");
 const postController = require("../controllers/postController");
 
-//GET request to get all posts
+//GET request to VIEW all posts
 router.get("/list", postController.getPosts)
 
-//GET request to get a post
+//GET request to VIEW a post
 router.get("/:id", postController.getPost);
 
-//GET request to 
+//GET request to VIEW all comments
+router.get("/:id/comment", postController.getComments)
 
-//POST request to add comment to a post
-router.post("/:id/comment", postController.addComment)
+//POST request to CREATE comment for a post
+router.post("/:id/comment/add", postController.addComment)
+
+/*
+-------------PROTECTED Routes----------------
+*/
 
 //PUT request to update a post
-router.put("/:id/update", postController.updatePost);
+router.put("/:id/update", passport.authenticate("jwt", {session: false}), postValidator.createPost, postController.updatePost);
 
 //DELETE request to delete a post
-router.delete("/:id/delete", postController.deletePost);
+router.delete("/:id/delete", passport.authenticate("jwt", {session: false}), postController.deletePost);
 
 //POST request to create a post
 router.post("/create", passport.authenticate("jwt", {session: false}), postValidator.createPost, postController.createPost);

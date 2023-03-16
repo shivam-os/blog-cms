@@ -15,15 +15,5 @@ exports.createPost = [
   .isEmpty()
   .withMessage("Content field cannot be empty!")
   .isLength({ min: 10 })
-  .withMessage("Content must contain minimum 10 letters!"),
-
-  body("category")
-  .not()
-  .isEmpty()
-  .withMessage("Category field cannot be empty!"),
-
-  body("author")
-  .not()
-  .isEmpty()
-  .withMessage("Author field cannot be empty!"),
+  .withMessage("Content must contain minimum 10 letters!")
 ]

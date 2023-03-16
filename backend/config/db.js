@@ -1,4 +1,9 @@
-const mongoose = require("mongoose");
+const Sequelize = require("sequelize");
 
-//Connect to the Mongodb
-mongoose.connect(process.env.DATABASE_URL)
+//Create connection
+const sequelize = new Sequelize("blogcms", "root", "", {
+  dialect: "mysql",
+  host: "localhost"
+} )
+
+module.exports = sequelize;

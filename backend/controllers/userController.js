@@ -4,17 +4,17 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 exports.signup = async (req, res) => {
-  try {
-    //Handle errors coming from signup validator
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+  //Handle errors coming from signup validator
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
+  try {
     const { name, email, password } = req.body;
 
     //Check if the email already exists in database
-    const existingUser = await User.findOne({ email: email });
+    const existingUser = await User.findOne({ where: { email: email } });
     if (existingUser) {
       return res
         .status(403)
@@ -43,17 +43,17 @@ exports.signup = async (req, res) => {
 };
 
 exports.signin = async (req, res) => {
-  try {
-    //Handle errors coming from signup validator
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+  //Handle errors coming from signup validator
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
+  try {
     const { email, password } = req.body;
 
     //Check if user already exists
-    const existingUser = await User.findOne({ email: email });
+    const existingUser = await User.findOne({ where: { email: email } });
     if (!existingUser) {
       return res
         .status(404)
@@ -72,14 +72,17 @@ exports.signin = async (req, res) => {
     }
 
     //If password matches, then assign a jwt token & save it in cookie
-    const payload = { userId: existingUser._id };
+    const payload = { userId: existingUser.dataValues.id };
+    console.log(existingUser.dataValues.id);
     const bearerToken = await jwt.sign(
       payload,
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "1h" }
     );
 
+    //Send the token in cookie with tkn as the key
     res.cookie("tkn", "Bearer " + bearerToken);
+
     return res.status(201).json({ token: "Bearer " + bearerToken });
   } catch (err) {
     console.log(err);

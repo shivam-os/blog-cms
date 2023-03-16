@@ -15,8 +15,7 @@ const options = {
 const strategy = new JwtStrategy(options, async (payload, done) => {
   try {
     //Get the userId from payload after verifying the jwt
-    const existingUser = await User.findOne({ _id: payload.userId }, {password: 0});
-    console.log(existingUser)
+    const existingUser = await User.findOne( {attributes: ["id", "name"]}, { where: {id: payload.userId} });
 
     //If user found, attach user to req object otherwise return false
     if (existingUser) {
