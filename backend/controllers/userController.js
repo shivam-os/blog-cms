@@ -1,5 +1,4 @@
 const { validationResult } = require("express-validator");
-require("dotenv").config();
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -80,8 +79,8 @@ exports.signin = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.cookie("tkn", bearerToken);
-    return res.status(201).send("User logged in successfully.");
+    res.cookie("tkn", "Bearer " + bearerToken);
+    return res.status(201).json({ token: "Bearer " + bearerToken });
   } catch (err) {
     console.log(err);
     return res
